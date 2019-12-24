@@ -31,3 +31,5 @@ Notes
 -----
 
 * Runit is set to run all services from `/var/service` by default
+* Init scripts are installed to `/usr/lib/init`
+* Init scripts read the OpenRC configuration files on `/etc/conf.d`
