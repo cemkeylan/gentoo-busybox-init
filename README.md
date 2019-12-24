@@ -4,7 +4,7 @@ Gentoo Busybox-init
 This program swaps OpenRC and SysVinit on Gentoo, 
 and effectively replaces it with busybox-init 
 and busybox runit. It is quite hacky and you may
-need to change the rc.init script to fit your
+need to change the `rc.boot` script to fit your
 purposes. 
 
 You may also need to manually edit your system set
