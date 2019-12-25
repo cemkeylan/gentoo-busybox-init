@@ -20,11 +20,10 @@ Just type `sudo ./install` and that's it.
 You can revert anytime by running `sudo ./revert`
 
 
-What this program does is, it copies the busybox 
-configuration to /etc/portage/savedconfig and installs
-busybox with the config file. Busybox is then built with
-`static` and `savedconfig` USE flags. It then removes
-sysvinit and installs its own init scripts and inittab.
+This program downloads the busybox source tarball, builds 
+with the given configuration and installs it to 
+/usr/local/bin/busybox-init. It then removes sysvinit 
+and installs its own init scripts and inittab.
 We do a `busybox --install` to make sure all init and
 runit programs are set in place.
 
