@@ -17,6 +17,8 @@ Instructions
 
 Just type `sudo ./install` and that's it.
 
+You can revert anytime by running `sudo ./revert`
+
 
 What this program does is, it copies the busybox 
 configuration to /etc/portage/savedconfig and installs
