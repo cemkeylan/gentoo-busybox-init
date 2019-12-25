@@ -28,6 +28,7 @@ remove_busybox() {
 	out "Unmerging busybox"
 	emerge --unmerge sys-apps/busybox || return 1
 	out "Removing busybox inittab"
+	[ -e /etc/inittab ] && rm /etc/inittab
 }
 
 install_sysvinit() {
