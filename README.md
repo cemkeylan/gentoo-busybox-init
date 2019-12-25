@@ -22,10 +22,11 @@ You can revert anytime by running `sudo ./revert`
 
 This program downloads the busybox source tarball, builds 
 with the given configuration and installs it to 
-/usr/local/bin/busybox-init. It then removes sysvinit 
-and installs its own init scripts and inittab.
-We do a `busybox --install` to make sure all init and
-runit programs are set in place.
+/usr/local/bin/busybox-init. We backup the configurations
+and the binaries of sysvinit with quickpkg, and then remove 
+sysvinit and install our own init scripts and inittab.
+We do a `/usr/local/bin/busybox-init --install` to make 
+sure all init and runit programs are set in place.
 
 
 Notes
