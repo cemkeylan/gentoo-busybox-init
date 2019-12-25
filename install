@@ -47,10 +47,8 @@ install_busybox() {
 }
 
 remove_sysvinit() {
-	if ! [ -e /etc/inittab.sysvinit ]; then
-		out "Backing up sysvinit inittab to /etc/inittab.sysvinit"
-		cp /etc/inittab /etc/inittab.sysvinit
-	fi
+	out "Backing up sysvinit as a binary package so you can revert anytime."
+	quickpkg --include-config y sysvinit
 	# Let's check everything again
 	[ -r /etc/inittab.sysvinit ] || ask "Couldn't backup sysvinit, continue?" || return 1
 	out "Removing sysvinit"
