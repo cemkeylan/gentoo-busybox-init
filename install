@@ -4,7 +4,8 @@
 # Variables
 # #########
 
-BUSYBOX_VERSION="1.30.1"
+BUSYBOX_VERSION="1.31.1"
+BUSYBOX_URL="https://busybox.net/downloads/busybox-$BUSYBOX_VERSION.tar.bz2"
 
 # ########
 # Messages
@@ -25,25 +26,43 @@ out "This program will change the way your system behaves by completely\\n remov
 ask "Do you want to continue?" || die "User Exited"
 
 
-install_savedconfig() {
-	out "Making sure savedconfig directory exists"
-	mkdir -p /etc/portage/savedconfig/sys-apps || return 1
-	out "Installing saved config"
-	cp -f busybox-config "/etc/portage/savedconfig/sys-apps/busybox-$BUSYBOX_VERSION" || die "Could not install saved config"
-	out "Configuration Installed successfully"
-}
+# Read the explanation on install_busybox function
 
-install_useflags() {
-	out "Making sure package.use directory exists"
-	[ -d /etc/portage/package.use ] || mkdir -p /etc/portage/package.use/ || return 1
-	out "Writing busybox useflags to /etc/portage/package.use/busybox"
-	printf "sys-apps/busybox savedconfig static\\n" > /etc/portage/package.use/busybox || return 1
-	out "USE Flags set!"
-}
+# install_savedconfig() {
+# 	out "Making sure savedconfig directory exists"
+# 	mkdir -p /etc/portage/savedconfig/sys-apps || return 1
+# 	out "Installing saved config"
+# 	cp -f busybox-config "/etc/portage/savedconfig/sys-apps/busybox-$BUSYBOX_VERSION" || die "Could not install saved config"
+# 	out "Configuration Installed successfully"
+# }
+# 
+# install_useflags() {
+# 	out "Making sure package.use directory exists"
+# 	[ -d /etc/portage/package.use ] || mkdir -p /etc/portage/package.use/ || return 1
+# 	out "Writing busybox useflags to /etc/portage/package.use/busybox"
+# 	printf "sys-apps/busybox savedconfig static\\n" > /etc/portage/package.use/busybox || return 1
+# 	out "USE Flags set!"
+# }
 
 install_busybox() {
-	out "Emerging busybox"
-	emerge --newuse sys-apps/busybox || die "Could not emerge busybox"
+	# For some reason even with "savedconfig" Portage emerges
+	# busybox with unspecified programs such as mkdir mount. We
+	# don't want this as it will cause problems when unmerging.
+	# Yeah, those important programs I have mentioned will be gone
+	# unless you emerge them again. I am not taking that risk here.
+	out "Fetching busybox"
+	wget "$BUSYBOX_URL" || return 1
+	out "Checking sha256sum of busybox"
+	sha256sum -c busybox-checksum || die "Busybox checksum did not pass"
+	out "Creating work/src directory for building busybox"
+	mkdir -p work/src || die "Could not create work/src directory"
+	tar xf busybox-$BUSYBOX_VERSION.tar.bz2 -C work/src --strip-components 1 || return 1
+	out "Copying busybox-config and starting build"
+	cp busybox-config work/src/.config
+	make -C work/src || return 1
+	out "Installing busybox to /usr/local/bin/busybox-init"
+	make -C work/src install CONFIG_PREFIX="/usr/local" || return 1
+	mv /usr/local/bin/busybox /usr/local/bin/busybox-init
 }
 
 remove_sysvinit() {
@@ -60,15 +79,15 @@ install_initscripts() {
 
 busybox_install() {
 	out "Install busybox applets (runit, init)"
-	/bin/busybox --install
+	/usr/local/bin/busybox-init --install
 	# We should do some sanity checks and report back
 	for program in $(busybox --list); do
 		command -v "$program" || error "$program is not installed"
 	done
 }
 
-install_savedconfig || die "Could not install savedconfig"
-install_useflags || die "Could not install USE Flags"
+# install_savedconfig || die "Could not install savedconfig"
+# install_useflags || die "Could not install USE Flags"
 install_busybox || die "Could not install busybox"
 remove_sysvinit || die "Could not remove sysvinit"
 install_initscripts || die "Could not install initscripts"

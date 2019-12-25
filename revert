@@ -21,12 +21,12 @@ remove_busybox() {
 	out "Removing busybox related stuff..."
 	# Make sure every busybox link is removed
 	out "Removing busybox symlinks"
-	for program in $(busybox --list) ; do
+	for program in $(/usr/local/bin/busybox-init --list) ; do
 		linklocation="$(which "$program")"
 		unlink "$linklocation" || error "Could not unlink $program"
 	done
-	out "Unmerging busybox"
-	emerge --unmerge sys-apps/busybox || return 1
+	out "Removing busybox binary from /usr/local/bin"
+	rm /usr/local/bin/busybox-init || return 1
 	out "Removing busybox inittab"
 	[ -e /etc/inittab ] && rm /etc/inittab
 }
