@@ -48,9 +48,7 @@ install_busybox() {
 
 remove_sysvinit() {
 	out "Backing up sysvinit as a binary package so you can revert anytime."
-	quickpkg --include-config y sysvinit
-	# Let's check everything again
-	[ -r /etc/inittab.sysvinit ] || ask "Couldn't backup sysvinit, continue?" || return 1
+	quickpkg --include-config y sysvinit || ask "Couldn't backup sysvinit, continue?" || return 1
 	out "Removing sysvinit"
 	emerge --unmerge sys-apps/sysvinit || die "Could not unmerge sysvinit"
 }
