@@ -80,7 +80,7 @@ install_initscripts() {
 	out "Getting Carbs Linux init scripts"
 	wget "$INIT_URL"
 	out "Checking sha256sum of carbs-init"
-	sha256-sum -c init-checksum || die "carbs-init checksum did not pass"
+	sha256sum -c init-checksum || die "carbs-init checksum did not pass"
 	mkdir -p initscripts || die "Could not create initscripts directory"
 	out "Extracting sources"
 	tar xf "init-$INIT_VERSION.tar.gz" -C initscripts --strip-components 1 || return 1
