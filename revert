@@ -23,6 +23,7 @@ remove_busybox() {
 	out "Removing busybox symlinks"
 	for program in $(/usr/local/bin/busybox-init --list) ; do
 		linklocation="$(which "$program")"
+		[ -L "$linklocation" ] || continue
 		unlink "$linklocation" || error "Could not unlink $program"
 	done
 	out "Removing busybox binary from /usr/local/bin"
