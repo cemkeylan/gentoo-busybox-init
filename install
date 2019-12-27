@@ -94,7 +94,7 @@ install_initscripts() {
 
 busybox_install() {
 	out "Install busybox applets (runit, init)"
-	/usr/local/bin/busybox-init --install
+	/usr/local/bin/busybox-init --install -s
 	# We should do some sanity checks and report back
 	for program in $(/usr/local/bin/busybox-init --list); do
 		command -v "$program" || error "$program is not installed"
