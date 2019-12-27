@@ -7,6 +7,9 @@
 BUSYBOX_VERSION="1.31.1"
 BUSYBOX_URL="https://busybox.net/downloads/busybox-$BUSYBOX_VERSION.tar.bz2"
 
+INIT_VERSION="0.2"
+INIT_URL="https://git.carbslinux.org/archives/init/init-0.2.tar.gz"
+
 # ########
 # Messages
 # ########
@@ -74,7 +77,19 @@ remove_sysvinit() {
 
 install_initscripts() {
 	out "Installing new inittab and init scripts"
+	out "Getting Carbs Linux init scripts"
+	wget "$INIT_URL"
+	out "Checking sha256sum of carbs-init"
+	sha256-sum -c init-checksum || die "carbs-init checksum did not pass"
+	mkdir -p initscripts || die "Could not create initscripts directory"
+	out "Extracting sources"
+	tar xf "init-$INIT_VERSION.tar.gz" -C initscripts --strip-components 1 || return 1
+	out "Applying patch for Gentoo"
+	cd initscripts || return 1
+	patch -p1 < ../gentoo_initscripts.patch || die "patch failed"
+	cd .. || return 1
 	make -C initscripts install || die "Could not install init scripts"
+	out "Successfully installed initscripts"
 }
 
 busybox_install() {
